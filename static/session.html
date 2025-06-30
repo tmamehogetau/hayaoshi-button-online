@@ -72,57 +72,58 @@
         <button id="reset" class="btn-square-pop">リセット</button>
         <button id="sound_pinpon" class="btn-square-pop btn-square-pop--shadow btn-square-pop--pinpon">ピンポン</button>
         <button id="sound_boboo" class="btn-square-pop btn-square-pop--shadow btn-square-pop--boboo">ブブーッ</button>
-  <input type="text" id="youtube-url" placeholder="https://www.youtube.com/watch?v=XXXXXX" size="50">
+         <!-- session.html の適切な場所（body内）に追記 -->
+<div id="youtube-controller" style="margin: 20px 0;">
+  <input type="text" id="youtube-url" placeholder="YouTube動画のURLを入力" size="50">
   <button id="play-button">再生</button>
   <button id="stop-button">停止</button>
+</div>
 
-  <!-- YouTubeプレイヤー埋め込み領域 -->
-  <div id="player" style="margin-top: 20px;"></div>
+<!-- YouTube動画プレイヤー -->
+<div id="player"></div>
 
-  <!-- YouTube IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
+<!-- YouTube IFrame Player API 読み込み -->
+<script src="https://www.youtube.com/iframe_api"></script>
 
-  <script>
-    let player;
+<script>
+  let player;
 
-    // API読み込み後に呼ばれる関数
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: '', // 初期は何も表示しない
-        events: {
-          onReady: () => console.log("YouTubeプレイヤー準備完了")
-        }
-      });
-    }
-
-    // YouTube動画のURLから videoId を抽出する関数
-    function extractVideoId(url) {
-      const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      return match ? match[1] : null;
-    }
-
-    // 再生ボタン：videoIdを抽出して読み込む
-    document.getElementById("play-button").addEventListener("click", () => {
-      const url = document.getElementById("youtube-url").value;
-      const videoId = extractVideoId(url);
-      if (videoId && player) {
-        player.loadVideoById(videoId);
-      } else {
-        alert("有効なYouTubeのURLを入力してください");
+  // YouTube IFrame API 読み込み後に自動実行される関数
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+      height: '360',
+      width: '640',
+      videoId: '', // 最初は空
+      events: {
+        onReady: () => console.log("YouTubeプレイヤー準備完了")
       }
     });
+  }
 
-    // 停止ボタン
-    document.getElementById("stop-button").addEventListener("click", () => {
-      if (player) {
-        player.stopVideo();
-      }
-    });
-  </script>
+  // 入力されたURLからvideoIdを抽出
+  function extractVideoId(url) {
+    const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : null;
+  }
 
-        
+  // 再生ボタンの処理
+  document.getElementById("play-button").addEventListener("click", () => {
+    const url = document.getElementById("youtube-url").value;
+    const videoId = extractVideoId(url);
+    if (videoId && player) {
+      player.loadVideoById(videoId);
+    } else {
+      alert("有効なYouTube動画URLを入力してください。");
+    }
+  });
+
+  // 停止ボタンの処理
+  document.getElementById("stop-button").addEventListener("click", () => {
+    if (player) {
+      player.stopVideo();
+    }
+  });
+</script>
         <div class="controllers">
             <div class="controllers__item">
                 <button id="openShareModal" class="controllers__button controllers__button--shadow">

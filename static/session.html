@@ -65,6 +65,55 @@
         </div>
     </div>
     <div id="playGame">
+          <input type="text" id="youtube-url" placeholder="https://www.youtube.com/watch?v=XXXXXX" size="50">
+  <button id="play-button">再生</button>
+  <button id="stop-button">停止</button>
+
+  <!-- YouTubeプレイヤー埋め込み領域 -->
+  <div id="player" style="margin-top: 20px;"></div>
+
+  <!-- YouTube IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    let player;
+
+    // API読み込み後に呼ばれる関数
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: '', // 初期は何も表示しない
+        events: {
+          onReady: () => console.log("YouTubeプレイヤー準備完了")
+        }
+      });
+    }
+
+    // YouTube動画のURLから videoId を抽出する関数
+    function extractVideoId(url) {
+      const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return match ? match[1] : null;
+    }
+
+    // 再生ボタン：videoIdを抽出して読み込む
+    document.getElementById("play-button").addEventListener("click", () => {
+      const url = document.getElementById("youtube-url").value;
+      const videoId = extractVideoId(url);
+      if (videoId && player) {
+        player.loadVideoById(videoId);
+      } else {
+        alert("有効なYouTubeのURLを入力してください");
+      }
+    });
+
+    // 停止ボタン
+    document.getElementById("stop-button").addEventListener("click", () => {
+      if (player) {
+        player.stopVideo();
+      }
+    });
+  </script>
         <div class="btnArea">
             <a href="#" id="push" class="btn-circle-3d btn-circle-3d--shadow pushable">押</a>
         </div>
@@ -90,6 +139,14 @@
             </div>
         </div>
         <div id="displayPushedPlayers" class="displayPushedPlayers"></div>
+
+       <iframe width="560" height="315"
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="説明"
+  frameborder="0"
+  allow="autoplay; encrypted-media"
+  allowfullscreen>
+</iframe>
     </div>
 </div>
 </body>
